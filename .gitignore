@@ -12,3 +12,4 @@ infra/plan.json
 infra/schema.json
 infra/tfplan.binary
 infra/*.binary
+.vscode/

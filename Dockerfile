@@ -33,9 +33,9 @@ RUN mkdir -p data && chown -R user:user data && chmod 755 data
 # Ab hier als Non-Root-User weiterarbeiten
 USER user
 
-EXPOSE 7860
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 \
-CMD curl -f http://localhost:7860/api/simple-health || exit 1
+CMD curl -f http://localhost:8080/api/simple-health || exit 1
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
