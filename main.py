@@ -135,20 +135,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost",
-        "http://localhost:3000", 
+        "http://localhost:3000",
         "http://localhost:8001",
-        "http://91.98.123.153",
-        "http://91.98.123.153:8001",
-        "http://91.98.123.153:8000",
-        "https://91.98.123.153",
-        "http://188.40.28.38",
-        "https://188.40.28.38",
-        "http://randolph-ai.com",
-        "https://randolph-ai.com",
-        "http://www.randolph-ai.com", 
-        "https://www.randolph-ai.com",
-        "http://api.randolph-ai.com",
-        "*"
+        # TODO: HF-Spaces-URL hier ergänzen, sobald der Space existiert
+        # z.B. "https://<username>-<space-name>.hf.space"
     ],
     allow_credentials=True,
     allow_methods=["*"],
