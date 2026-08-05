@@ -28,7 +28,7 @@
  *   Version:     1.0.0
  *   Lizenz:      MIT (Open-Source)
  *   Erstellt:    17.09.2025
- *   Letzte Änd.: 28.10.2025
+ *   Letzte Änd.: 04.08.2026
  *   Abhängigk.:  Siehe `requirements.txt`
  ******************************************************************************/
 """
@@ -39,6 +39,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from langchain_core.documents import Document
 import os
 import json
 import shutil
@@ -59,7 +60,6 @@ from langchain_qdrant import QdrantVectorStore
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.schema import Document
 
 # Qdrant Client
 from qdrant_client import QdrantClient, models
@@ -72,6 +72,7 @@ load_dotenv()
 QDRANT_SERVER_URL = os.getenv("QDRANT_SERVER_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEFAULT_COLLECTION = os.getenv("COLLECTION_NAME", "DSGVO")
 DOCUMENTS_DIR = os.getenv("DOCUMENTS_DIR", "./data/ETS")
 
@@ -137,8 +138,7 @@ app.add_middleware(
         "http://localhost",
         "http://localhost:3000",
         "http://localhost:8001",
-        # TODO: HF-Spaces-URL hier ergänzen, sobald der Space existiert
-        # z.B. "https://<username>-<space-name>.hf.space"
+        "https://rag-backend-mfmw3fed6q-ey.a.run.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -167,11 +167,11 @@ def initialize_services():
         print("✅ OpenAI Embeddings initialisiert")
 
         llm = ChatOpenAI(
-            model="gpt-4o-mini", 
-            temperature=0.1,
-            openai_api_key=OPENAI_API_KEY
+            model="deepseek-v4-flash",
+            base_url="https://api.deepseek.com/v1",
+            openai_api_key=DEEPSEEK_API_KEY
         )
-        print("✅ OpenAI LLM initialisiert")
+        print("✅ DeepSeek LLM initialisiert")
 
         return client, embeddings, llm
 
