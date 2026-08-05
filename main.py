@@ -48,7 +48,7 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 from typing import List, Optional, Dict, Any
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -466,7 +466,7 @@ async def simple_health_check():
     return {
         "status": "healthy", 
         "message": "FastAPI läuft",
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 @app.get("/")
@@ -487,19 +487,19 @@ async def health_check():
                     "openai": openai_status,
                     "backend": "running"
                 },
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }
         else:
             return {
                 "status": "unhealthy", 
                 "error": "Services not initialized",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }
     except Exception as e:
         return {
             "status": "unhealthy",
             "error": str(e),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
 @app.post("/api/ask")
@@ -541,7 +541,7 @@ async def ask_question(request: ChatRequest):
                 "total_documents": result["total_documents"],
                 "relevant_documents": result["relevant_documents"],
                 "search_method": result["search_method"],
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }
         }
 
@@ -588,7 +588,7 @@ async def search_documents(request: SearchRequest):
             "search_method": search_method,
             "results": formatted_results,
             "total_results": len(formatted_results),
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
     except Exception as e:
@@ -633,7 +633,7 @@ async def upload_document(
                 "file_name": file.filename,
                 "pdf_name": file.filename.replace('.pdf', '').replace('.txt', ''),
                 "collection": collection_name,
-                "upload_time": datetime.now().isoformat()
+                "upload_time": datetime.now(timezone.utc).isoformat()
             })
 
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
