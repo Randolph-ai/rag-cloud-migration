@@ -85,7 +85,7 @@ resource "google_cloud_run_v2_service" "rag_backend" {
 
   template {
     containers {
-      image = "europe-west3-docker.pkg.dev/${var.gcp_project_id}/rag-migration-repo/rag-backend:v1"
+      image = "europe-west3-docker.pkg.dev/${var.gcp_project_id}/rag-migration-repo/rag-backend:v5"
 
       ports {
         container_port = 8080
