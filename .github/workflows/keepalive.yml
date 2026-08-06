@@ -1,0 +1,20 @@
+name: Keep-Alive (Qdrant Free Tier)
+
+on:
+  schedule:
+    # Läuft alle 2 Tage um 06:00 UTC.
+    # Hinweis: Cron kennt kein natives "alle X Tage" über Monatsgrenzen
+    # hinweg (*/3 im Tag-Feld bezieht sich auf den Tag-des-Monats und
+    # würde an Monatsgrenzen kurzzeitig einen größeren Abstand erzeugen,
+    # z.B. zwischen dem 30. und dem 3. des Folgemonats). Alle 2 Tage
+    # gewählt statt alle 3, als Sicherheitspuffer gegen dieses Cron-Detail.
+    - cron: '0 6 */2 * *'
+  workflow_dispatch: {}  # ermöglicht manuellen Start über den "Run workflow"-Button
+
+jobs:
+  ping-health-endpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Health-Endpoint aufrufen
+        run: |
+          curl -f https://rag-backend-mfmw3fed6q-ey.a.run.app/api/health
