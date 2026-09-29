@@ -14,6 +14,7 @@ Run gehostet und über Terraform deklarativ provisioniert.
 - [Architektur](#architektur)
 - [Tech-Stack](#tech-stack)
 - [Infrastructure as Code](#infrastructure-as-code)
+- [Betrieb & Keep-Alive](#betrieb--keep-alive)
 - [Interessante Entscheidungen](#interessante-entscheidungen)
 - [Lokal ausführen](#lokal-ausführen)
 - [Lizenz](#lizenz)
@@ -145,6 +146,40 @@ infra/
 `terraform apply` provisioniert beide Systeme in einem Lauf – vom leeren
 Google-Cloud-Projekt bis zur öffentlich erreichbaren, funktionierenden
 Anwendung.
+
+---
+## Betrieb & Keep-Alive
+
+Der Qdrant-Cluster läuft im Free Tier, und der wird bei längerer Inaktivität
+pausiert. Damit die Live-Demo jederzeit antwortet, pingt ein geplanter
+GitHub-Actions-Workflow (`.github/workflows/keep-alive.yml`) den Cluster
+regelmäßig an.
+
+Dabei gibt es ein zweites, weniger offensichtliches Problem: GitHub
+deaktiviert geplante Workflows automatisch, wenn ein Repository 60 Tage lang
+keine Commits bekommt. Der Keep-Alive würde also genau dann ausfallen, wenn
+das Projekt stabil läuft und niemand daran arbeitet.
+
+Die Lösung kommt ohne Dummy-Commits aus. Der Workflow ruft bei jedem Lauf
+über die GitHub-API seinen eigenen `enable`-Endpoint auf und setzt so den
+Inaktivitäts-Zähler selbst zurück:
+
+```yaml
+permissions:
+  actions: write
+
+# ...
+
+- name: Workflow aktiv halten
+  run: |
+    gh api -X PUT \
+      "repos/${{ github.repository }}/actions/workflows/keep-alive.yml/enable"
+  env:
+    GH_TOKEN: ${{ github.token }}
+```
+
+So bleibt die Git-Historie sauber, und das System hält sich ohne manuelles
+Eingreifen selbst am Leben.
 
 ---
 
