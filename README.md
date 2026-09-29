@@ -36,7 +36,14 @@ getrennt auftauchen, hier aber als ein zusammenhängendes System gedacht sind:
 
 Der Punkt: Eine funktionierende AI-Anwendung *und* deren produktionsreife,
 deklarative Bereitstellung sind hier bewusst ein Stück Arbeit, keine zwei
-getrennten Projekte.
+getrennte Projekte.
+
+Dieses Projekt entstand mit dem Ziel, moderne AI-Anwendungsentwicklung und
+Infrastructure as Code in einem praktischen End-to-End-Szenario zu verbinden.
+Der Schwerpunkt liegt dabei nicht nur auf der Nutzung eines LLM, sondern auf
+dem vollständigen technischen Lösungsweg: Dokumentenverarbeitung,
+Vektorsuche, API-Entwicklung, Containerisierung, Cloud-Betrieb und
+reproduzierbare Bereitstellung über Terraform.
 
 ---
 
@@ -189,19 +196,28 @@ Eingreifen selbst am Leben.
   Embedding-Modelle an, daher laufen Embeddings weiter über OpenAI, während
   die Antwortgenerierung über DeepSeek läuft (OpenAI-kompatible API, nur
   `base_url` und Modellname geändert – kein Umbau der Anwendungslogik nötig).
+  
 - **Region bewusst gewählt, nicht Standard übernommen**: Artifact Registry
   und Cloud Run laufen in `europe-west3` statt der Terraform-Default-Region
   `us-central1` – Entscheidung für Datenresidenz-Nähe zu den verarbeiteten
   Dokumenten.
+
 - **Bewusst offener Zugriff statt Standard-Absicherung**: Der Cloud-Run-Service
   ist über `allUsers` öffentlich erreichbar – keine übersehene Lücke, sondern
   eine begründete Entscheidung für Erreichbarkeit ohne Login-Hürde.
+
 - **Fehlerursachen liegen oft eine Ebene tiefer als vermutet**: Ein
   zeitzonenbedingter Anzeigefehler im Frontend wurde technisch korrekt im
   Backend behoben, bestand aber weiter – die eigentliche Ursache war eine
   hart codierte alte API-URL im Frontend, die den Fix nie zur Wirkung kommen
   ließ. Systematisches Nachverfolgen der gesamten Kette statt Nachbessern am
   ursprünglichen Fix führte zur Lösung.
+
+- **Infrastruktur als Teil der Anwendung gedacht**: Der Fokus liegt nicht nur
+  auf einer funktionierenden AI-Anwendung, sondern ebenso auf deren
+  reproduzierbarer Bereitstellung. Sämtliche Cloud-Ressourcen werden über
+  Terraform verwaltet und versioniert, statt manuell erstellt oder
+  dokumentiert.
 
 ---
 
